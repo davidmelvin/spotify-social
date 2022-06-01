@@ -1,7 +1,9 @@
 const buddyList = require('./')
+require('dotenv').config()
+
 
 async function main () {
-  const spDcCookie = 'put your cookie here'
+  const spDcCookie = process.env.SP_DC_COOKIE
 
   const { accessToken } = await buddyList.getWebAccessToken(spDcCookie)
   const friendActivity = await buddyList.getFriendActivity(accessToken)
