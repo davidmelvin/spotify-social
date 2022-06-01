@@ -42,7 +42,8 @@ exports.wrapWebApi = function wrapWebApi (api) {
       })
       .withHeaders({
         Accept: 'application/json',
-        Cookie: `sp_dc=${spDcCookie}`
+        Cookie: `sp_dc=${spDcCookie}`,
+        "User-Agent": 'Mozilla/5.0'
       })
       .build()
       .execute(HttpManager.get, callback)
@@ -61,3 +62,6 @@ exports.wrapWebApi = function wrapWebApi (api) {
 
   return api
 }
+
+
+// https://spclient.wg.spotify.com/user-profile-view/v3/profile/11128762117/playlists?offset=0&limit=200&market=from_token

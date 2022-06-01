@@ -11,6 +11,8 @@ async function main () {
   console.log(JSON.stringify(friendActivity, null, 2))
 }
 
+
+
 main()
 
 // Run every minute
