@@ -6,7 +6,9 @@ const fs = require("fs");
 const myFollowedProfilesFileLocation =
   __dirname + "/data/myFollowedProfiles.json";
 
-async function getMyFollowedProfiles(accessToken) {
+const myFriendsDataFolderLocation = __dirname + "/data/friends/";
+
+async function getAndSaveMyFollowedProfiles(accessToken) {
   const me = await buddyList.getFollowedAccountsForUserID(
     accessToken,
     "kf4ls52nbna2ooyvj9k2ixzgb"
@@ -54,6 +56,26 @@ function getMyArtistData() {
   return artistDataAugmented;
 }
 
+async function getAndSaveProfilesFollowedByMyFriends(friendData, accessToken) {
+  for (const profile of friendData) {
+    console.log(`Getting profiles followed by ${profile.name}...`);
+    const profilesFollowedByFriend =
+      await buddyList.getFollowedAccountsForUserID(accessToken, profile.userID);
+
+    fs.writeFile(
+      myFriendsDataFolderLocation + profile.userID + ".json",
+      JSON.stringify(profilesFollowedByFriend.profiles, null, 2),
+      function (err) {
+        if (err) {
+          return console.error(err);
+        }
+      }
+    );
+
+    await new Promise((r) => setTimeout(r, 100));
+  }
+}
+
 async function main() {
   const spDcCookie = process.env.SP_DC_COOKIE;
   const { accessToken } = await buddyList.getWebAccessToken(spDcCookie);
@@ -64,12 +86,14 @@ async function main() {
   const tokenResponse = await spotifyAPI.getWebAccessToken();
   spotifyAPI.setAccessToken(tokenResponse.body.accessToken);
 
-  //   await getMyFollowedProfiles(accessToken);
+  //   await saveMyFollowedProfiles(accessToken);
   const myFriendData = getMyFriendData();
   console.log(myFriendData.length);
 
   const myArtistData = getMyArtistData();
   console.log(myArtistData.length);
+
+  getAndSaveProfilesFollowedByMyFriends(myFriendData, accessToken);
 
   //   for (const profile of friendData) {
   //     console.log(`Getting profiles followed by: ${profile.name}...`);
@@ -93,7 +117,7 @@ async function main() {
   //     });
   //     console.log(`${profile.name} -- Arists in common: ${artistsInCommon.length}. Friends in common: ${friendsInCommon.length}.`)
 
-  //     await new Promise(r => setTimeout(r, 2000));
+  //
   // }
 }
 
