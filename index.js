@@ -24,6 +24,17 @@ exports.getFriendActivity = async function getFriendActivity (webAccessToken) {
   return res.json()
 }
 
+exports.getFollowedAccountsForUserID = async function foo (webAccessToken, userID) {
+  const res = await
+    fetch(`https://spclient.wg.spotify.com/user-profile-view/v3/profile/${userID}/following?market=from_token`, {
+    headers: {
+      Authorization: `Bearer ${webAccessToken}`
+    }
+  })
+
+  return res.json()
+}
+
 exports.wrapWebApi = function wrapWebApi (api) {
   const Request = require('spotify-web-api-node/src/base-request')
   const HttpManager = require('spotify-web-api-node/src/http-manager')
@@ -60,8 +71,20 @@ exports.wrapWebApi = function wrapWebApi (api) {
       .execute(HttpManager.get, callback)
   }
 
+  // https://spclient.wg.spotify.com/user-profile-view/v3/profile/fzzfawpi8ustfwtikooal0ijm/following?market=from_token is a way to list all users and artists someone is following
+
+  api.getFollowedAccountsOfUser = function getFollowedAccountsOfUser (userId, callback) {
+    return Request.builder()
+      .withHost('spclient.wg.spotify.com')
+      .withPort(443)
+      .withScheme('https')
+      .withAuth(this.getAccessToken())
+      .withPath(`/user-profile-view/v3/profile/${userId}/following?market=from_token`)
+      .build()
+      .execute(HttpManager.get, callback)
+  }
+
   return api
 }
 
 
-// https://spclient.wg.spotify.com/user-profile-view/v3/profile/11128762117/playlists?offset=0&limit=200&market=from_token
