@@ -2,6 +2,7 @@ const SpotifyWebApi = require("spotify-web-api-node");
 const buddyList = require("./");
 require("dotenv").config();
 const fs = require("fs");
+const utils = require("./utils");
 
 const myFollowedProfilesFileLocation =
   __dirname + "/data/myFollowedProfiles.json";
@@ -76,31 +77,43 @@ async function getAndSaveProfilesFollowedByMyFriends(friendData, accessToken) {
   }
 }
 
-async function main() {
-  const spDcCookie = process.env.SP_DC_COOKIE;
-  const { accessToken } = await buddyList.getWebAccessToken(spDcCookie);
+function getFriendFileData() {
+  // https://stackoverflow.com/questions/10049557/reading-all-files-in-a-directory-store-them-in-objects-and-send-the-object
 
-  const spotifyAPI = buddyList.wrapWebApi(
-    new SpotifyWebApi({ spDcCookie: process.env.SP_DC_COOKIE })
+  let friendsFollowedProfiles = {};
+  utils.readFiles(
+    myFriendsDataFolderLocation,
+    function (filename, content) {
+      key = filename.split(".")[0];
+      friendsFollowedProfiles[key] = JSON.parse(content);
+      //   console.log(friendsFollowedProfiles[key].length);
+    },
+    console.err
   );
-  const tokenResponse = await spotifyAPI.getWebAccessToken();
-  spotifyAPI.setAccessToken(tokenResponse.body.accessToken);
+
+  return friendsFollowedProfiles;
+}
+
+async function main() {
+  //   const spDcCookie = process.env.SP_DC_COOKIE;
+  //   const { accessToken } = await buddyList.getWebAccessToken(spDcCookie);
+
+  //   const spotifyAPI = buddyList.wrapWebApi(
+  //     new SpotifyWebApi({ spDcCookie: process.env.SP_DC_COOKIE })
+  //   );
+  //   const tokenResponse = await spotifyAPI.getWebAccessToken();
+  //   spotifyAPI.setAccessToken(tokenResponse.body.accessToken);
 
   //   await saveMyFollowedProfiles(accessToken);
-  const myFriendData = getMyFriendData();
-  console.log(myFriendData.length);
+  //   const myFriendData = getMyFriendData();
+  //   console.log(myFriendData.length);
 
-  const myArtistData = getMyArtistData();
-  console.log(myArtistData.length);
+  //   const myArtistData = getMyArtistData();
+  //   console.log(myArtistData.length);
 
-  getAndSaveProfilesFollowedByMyFriends(myFriendData, accessToken);
-
-  //   for (const profile of friendData) {
-  //     console.log(`Getting profiles followed by: ${profile.name}...`);
-  //     const profilesFollowedByFriend =
-  //       await buddyList.getFollowedAccountsForUserID(accessToken, profile.userID);
-
-  //   }
+  //   getAndSaveProfilesFollowedByMyFriends(myFriendData, accessToken);
+  const friendsFollowedProfiles = getFriendFileData();
+  //   console.log(Object.keys(friendsFollowedProfiles));
 
   // for (const profile of friendData) {
   //     console.log(`Getting profiles followed by: ${profile.name}...`)
