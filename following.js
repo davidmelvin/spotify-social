@@ -38,6 +38,22 @@ function getMyFriendData() {
 
   return friendDataAugmented;
 }
+
+function getMyArtistData() {
+  const rawData = fs.readFileSync(myFollowedProfilesFileLocation);
+  let friendData = JSON.parse(rawData).profiles;
+
+  const artistsIFollow = friendData.filter(function (profile) {
+    return profile.uri.startsWith("spotify:artist");
+  });
+
+  artistDataAugmented = artistsIFollow.map(function (profile) {
+    return { ...profile, friends_who_follow: [] };
+  });
+
+  return artistDataAugmented;
+}
+
 async function main() {
   const spDcCookie = process.env.SP_DC_COOKIE;
   const { accessToken } = await buddyList.getWebAccessToken(spDcCookie);
@@ -51,6 +67,9 @@ async function main() {
   //   await getMyFollowedProfiles(accessToken);
   const myFriendData = getMyFriendData();
   console.log(myFriendData.length);
+
+  const myArtistData = getMyArtistData();
+  console.log(myArtistData.length);
 
   //   for (const profile of friendData) {
   //     console.log(`Getting profiles followed by: ${profile.name}...`);
