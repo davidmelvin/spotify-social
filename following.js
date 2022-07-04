@@ -14,18 +14,27 @@ async function main () {
     spotifyAPI.setAccessToken(tokenResponse.body.accessToken)
 
     
-    const following = await buddyList.getFollowedAccountsForUserID(accessToken, "fzzfawpi8ustfwtikooal0ijm");
+    const other = await buddyList.getFollowedAccountsForUserID(accessToken, "fzzfawpi8ustfwtikooal0ijm");
+    const me = await buddyList.getFollowedAccountsForUserID(accessToken, "kf4ls52nbna2ooyvj9k2ixzgb");
 
-    const myArtists = await spotifyAPI.getFollowedArtists({limit: 1}).then(
-        function (data) {
-            return data.body.artists.items
-        },
-        function (err) {
-            console.error(err);
-        }
-    )
+    const overlap = other.profiles.filter(function(account) {
+        return account.is_following;
+    })
 
-  console.log(myArtists);
+    // console.log(overlap);
+    console.log(`we both follow ${overlap.length} users`)
+    for (const account of overlap) {
+        console.log(account.name)
+    }
+    // const myArtists = await spotifyAPI.getFollowedArtists({limit: 1}).then(
+    //     function (data) {
+    //         return data.body.artists.items
+    //     },
+    //     function (err) {
+    //         console.error(err);
+    //     }
+    // )
+
 }
 
 
