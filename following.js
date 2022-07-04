@@ -34,10 +34,15 @@ function getMyFriendData() {
     return profile.uri.startsWith("spotify:user");
   });
 
-  friendDataAugmented = friendsIFollow.map(function (profile) {
-    id = profile.uri.split(":").pop();
-    return { ...profile, userID: id };
-  });
+  friendDataAugmented = {};
+
+  for (const friend of friendsIFollow) {
+    id = friend.uri.split(":").pop();
+    friendDataAugmented[id] = friend;
+  }
+  //   friendDataAugmented = friendsIFollow.map(function (profile) {
+  //     return { ...profile, userID: id };
+  //   });
 
   return friendDataAugmented;
 }
@@ -94,6 +99,25 @@ function getFriendFileData() {
   return friendsFollowedProfiles;
 }
 
+function listFriendsbyArtist(friendData, friendsFollowedProfiles) {
+  sharedArtists = {};
+  for (const [friendUserID, friendsProfiles] of Object.entries(
+    friendsFollowedProfiles
+  )) {
+    for (const profile of friendsProfiles) {
+      friendName = friendData[friendUserID].name;
+      if (profile.is_following && profile.uri.startsWith("spotify:artist")) {
+        if (profile.name in sharedArtists) {
+          sharedArtists[profile.name].push(friendName);
+        } else {
+          sharedArtists[profile.name] = [friendName];
+        }
+      }
+    }
+  }
+
+  return sharedArtists;
+}
 async function main() {
   //   const spDcCookie = process.env.SP_DC_COOKIE;
   //   const { accessToken } = await buddyList.getWebAccessToken(spDcCookie);
@@ -105,7 +129,7 @@ async function main() {
   //   spotifyAPI.setAccessToken(tokenResponse.body.accessToken);
 
   //   await saveMyFollowedProfiles(accessToken);
-  //   const myFriendData = getMyFriendData();
+  const myFriendData = getMyFriendData();
   //   console.log(myFriendData.length);
 
   //   const myArtistData = getMyArtistData();
@@ -114,6 +138,13 @@ async function main() {
   //   getAndSaveProfilesFollowedByMyFriends(myFriendData, accessToken);
   const friendsFollowedProfiles = getFriendFileData();
   //   console.log(Object.keys(friendsFollowedProfiles));
+
+  const sharedArtists = listFriendsbyArtist(
+    myFriendData,
+    friendsFollowedProfiles
+  );
+
+  console.log(sharedArtists);
 
   // for (const profile of friendData) {
   //     console.log(`Getting profiles followed by: ${profile.name}...`)
