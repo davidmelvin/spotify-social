@@ -28,6 +28,7 @@ async function getAndSaveMyFollowedProfiles(accessToken) {
 }
 
 function getMyFriendData() {
+  console.log("getMyFriendData");
   const rawData = fs.readFileSync(myFollowedProfilesFileLocation);
   let friendData = JSON.parse(rawData).profiles;
 
@@ -145,22 +146,22 @@ async function main() {
   const tokenResponse = await spotifyAPI.getWebAccessToken();
   spotifyAPI.setAccessToken(tokenResponse.body.accessToken);
 
-  //   await saveMyFollowedProfiles(accessToken);
+  // await getAndSaveMyFollowedProfiles(accessToken);
   const myFriendData = getMyFriendData();
 
-  //   const myArtistData = getMyArtistData();
-  //   console.log(myArtistData.length);
+  const myArtistData = getMyArtistData();
+  console.log(myArtistData.length);
 
-  //   getAndSaveProfilesFollowedByMyFriends(myFriendData, accessToken);
+  getAndSaveProfilesFollowedByMyFriends(myFriendData, accessToken);
   const friendsFollowedProfiles = getFriendFileData();
-  //   //   console.log(Object.keys(friendsFollowedProfiles));
+  console.log(Object.keys(friendsFollowedProfiles));
 
   const sharedArtists = listFriendsbyArtist(
     myFriendData,
     friendsFollowedProfiles
   );
 
-  //   console.log(sharedArtists);
+  console.log(sharedArtists);
 
   fs.writeFile(
     sharedArtistsFileLocation,
