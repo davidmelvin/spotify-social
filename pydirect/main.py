@@ -1,4 +1,4 @@
-from credentials import get_access_token
+from accounts import get_followed_accounts_of_user
 
 
-print(get_access_token())
+get_followed_accounts_of_user("1297443575")
