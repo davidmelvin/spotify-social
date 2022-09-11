@@ -1,17 +1,24 @@
-# from models import Result
 from requests import request
 from flask import Flask, render_template, request
 from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
-
 from accounts import save_followed_accounts_of_user
+from models import db
 
-app = Flask(__name__)
-app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql:///concert_buddies'
 
-db = SQLAlchemy(app)
-migrate = Migrate(app, db)
+def create_app():
+    app = Flask(__name__)
+    app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+    app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql:///concert_buddies'
+
+    db.init_app(app)
+
+    migrate = Migrate(app, db)
+
+    return app
+
+
+app = create_app()
 
 
 @app.route('/', methods=["GET", "POST"])
@@ -22,10 +29,10 @@ def index():
     if request.method == "POST":
         try:
             user_id = request.form['url']
-            # save_followed_accounts_of_user(user_id)
-        except:
+            results = save_followed_accounts_of_user(user_id)
+        except Exception as err:
             errors.append(
-                "Unable to get URL. Please make sure it's valid and try again."
+                err
             )
 
     return render_template('index.html', errors=errors, results=results)

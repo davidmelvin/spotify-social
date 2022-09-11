@@ -1,7 +1,7 @@
-from urllib.error import HTTPError
-
-from credentials import api_access_token
 from utils.requests import get_data_from_url
+
+from models import Account
+from models import db
 
 
 def get_followed_accounts_of_user(user_id: str):
@@ -19,15 +19,25 @@ def save_followed_accounts_of_user(user_id: str):
 
     if followed_accounts:
         try:
-            print(followed_accounts[0])
-            # account = Result(
-            #     url=url,
-            #     result_all=raw_word_count,
-            #     result_no_stop_words=no_stop_words_count
-            # )
-            # db.session.add(result)
-            # db.session.commit()
-        except:
-            print("Unable to add item to database.")
+            accounts = followed_accounts["profiles"]
+
+            for profile in accounts:
+                uri = profile.get("uri", "unkown uri")
+
+                if ":user:" in uri:
+                    type = "user"
+                else:
+                    type = "artist"
+
+                account = Account(
+                    uri=uri,
+                    name=profile.get("name", "unknown name"),
+                    type=type
+                )
+                db.session.add(account)
+                db.session.commit()
+
+        except Exception as err:
+            raise Exception(f"Unable to add item to database. error: {err}")
     else:
         print(f"Didn't find any accounts user {user_id} follows!")

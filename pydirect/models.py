@@ -1,4 +1,6 @@
-from app import db
+from flask_sqlalchemy import SQLAlchemy
+
+db = SQLAlchemy()
 
 
 class Account(db.Model):
@@ -10,7 +12,7 @@ class Account(db.Model):
     type = db.Column(db.String())
 
     def __init__(self, uri, name, type):
-        self.url = uri
+        self.uri = uri
         self.name = name
         self.type = type
 
