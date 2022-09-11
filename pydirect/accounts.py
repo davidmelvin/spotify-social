@@ -2,18 +2,14 @@ import requests
 from urllib.error import HTTPError
 
 from credentials import api_access_token
+from utils.requests import get_data_from_url
 
 
 def get_followed_accounts_of_user(user_id: str):
-    url = "https://spclient.wg.spotify.com/user-profile-view/v3/profile/{}/following?market=from_token"
+    url = "https://spclient.wg.spotify.com/user-profile-view/v3/profile/{params[user_id]}/following?market=from_token"
 
-    try:
-        response = requests.get(
-            url.format(user_id), headers={'Authorization': 'Bearer {}'.format(api_access_token)})
+    params = {"user_id": user_id}
 
-    except HTTPError as http_err:
-        print(f'HTTP error: {http_err}')
-    except Exception as err:
-        print(f'Unkown error: {err}')
-    else:
-        return response.json()
+    print(f"getting followed accounts of {user_id}")
+
+    return get_data_from_url(url, params)
