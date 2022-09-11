@@ -1,5 +1,3 @@
-from neo4j import GraphDatabase
-import requests
 from urllib.error import HTTPError
 
 from credentials import api_access_token
@@ -16,21 +14,20 @@ def get_followed_accounts_of_user(user_id: str):
     return get_data_from_url(url, params)
 
 
-def test():
-    uri = "neo4j://localhost:7687"
-    driver = GraphDatabase.driver(uri, auth=("neo4j", "password"))
+def save_followed_accounts_of_user(user_id: str):
+    followed_accounts = get_followed_accounts_of_user(user_id)
 
-    def create_person(tx, name):
-        tx.run("CREATE (a:Person {name: $name})", name=name)
-
-    def create_friend_of(tx, name, friend):
-        tx.run("MATCH (a:Person) WHERE a.name = $name "
-               "CREATE (a)-[:KNOWS]->(:Person {name: $friend})",
-               name=name, friend=friend)
-
-    with driver.session() as session:
-        session.write_transaction(create_person, "Alice")
-        session.write_transaction(create_friend_of, "Alice", "Bob")
-        session.write_transaction(create_friend_of, "Alice", "Carl")
-
-    driver.close()
+    if followed_accounts:
+        try:
+            print(followed_accounts[0])
+            # account = Result(
+            #     url=url,
+            #     result_all=raw_word_count,
+            #     result_no_stop_words=no_stop_words_count
+            # )
+            # db.session.add(result)
+            # db.session.commit()
+        except:
+            print("Unable to add item to database.")
+    else:
+        print(f"Didn't find any accounts user {user_id} follows!")

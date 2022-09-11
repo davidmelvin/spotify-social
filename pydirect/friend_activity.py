@@ -8,6 +8,7 @@ def get_friend_activity():
 
     return get_data_from_url(url)
 
+
 # def get_friend_activity():
 #     url =
 #       api.getFriendActivity = function getFriendActivity(callback) {

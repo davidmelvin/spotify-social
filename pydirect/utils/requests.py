@@ -14,7 +14,9 @@ def get_data_from_url(url: str, params: dict = None) -> dict:
 
     except HTTPError as http_err:
         print(f'HTTP error: {http_err}')
+        return http_err
     except Exception as err:
         print(f'Unkown error: {err}')
+        return err
     else:
         return response.json()
