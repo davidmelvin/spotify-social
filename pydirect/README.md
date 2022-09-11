@@ -30,6 +30,9 @@ May want to use a graph database.
     - artist
     - playlist
     - timestamp
+- follow data
+    - follower account id
+    - followed account id
 
 
 # Resources
