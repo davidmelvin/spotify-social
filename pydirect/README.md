@@ -30,3 +30,7 @@ May want to use a graph database.
     - artist
     - playlist
     - timestamp
+
+
+# Resources
+1. https://realpython.com/flask-by-example-part-1-project-setup/
