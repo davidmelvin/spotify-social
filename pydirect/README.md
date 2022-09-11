@@ -11,3 +11,16 @@ to-do:
 - get all playlists I follow
 - get all playlists my friends follow
 - get shared playlists
+- track when a friend listens to an artist I follow or a playlist I follow
+
+## Data Models
+May want to use a graph database.
+- artists
+    - uri - string
+    - name - string
+    - is_following? (maybe)
+- accounts
+    - uri
+    - name
+- playlists
+- songs
