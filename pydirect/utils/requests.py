@@ -5,8 +5,9 @@ from urllib.error import HTTPError
 from credentials import api_access_token
 
 
-def get_data_from_url(url: str, params: dict[str, str]) -> dict:
+def get_data_from_url(url: str, params: dict[str, str] = None) -> dict:
     url = url.format(params=params)
+    print(url)
     try:
         response = requests.get(
             url, headers={'Authorization': 'Bearer {}'.format(api_access_token)})
