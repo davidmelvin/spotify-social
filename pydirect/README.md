@@ -23,4 +23,10 @@ May want to use a graph database.
     - uri
     - name
 - playlists
-- songs
+- song events
+    - uri
+    - name
+    - album (prob piskip this)
+    - artist
+    - playlist
+    - timestamp

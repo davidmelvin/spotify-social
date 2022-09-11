@@ -6,3 +6,8 @@
 
 # Byte-compiled / optimized / DLL files
 *.pyc
+
+database.ini
+
+# venv
+sandbox/
