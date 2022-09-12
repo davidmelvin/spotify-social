@@ -21,4 +21,4 @@ def get_data_from_url(url: str, params: dict = None) -> dict:
         print(f'Unkown error: {err}')
         return err
     else:
-        return response.json()
+        return response
