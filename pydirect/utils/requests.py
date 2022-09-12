@@ -2,7 +2,9 @@ import requests
 from urllib.error import HTTPError
 
 
-from credentials import api_access_token
+from credentials import get_access_token
+
+api_access_token = get_access_token()
 
 
 def get_data_from_url(url: str, params: dict = None) -> dict:

@@ -14,11 +14,11 @@
     <div class="container">
       <div class="row">
         <div class="col-sm-5 col-sm-offset-1">
-          <h1>Wordcount 3000</h1>
+          <h1>Concert Buddies!</h1>
           <br>
           <form role="form" method="POST" action="/">
             <div class="form-group">
-              <input type="text" name="url" class="form-control" id="url-box" placeholder="Enter URL..." style="max-width: 300px;">
+              <input type="text" name="url" class="form-control" id="url-box" placeholder="Enter Spotify Follower Account ID..." style="max-width: 300px;">
             </div>
             <button type="submit" class="btn btn-default">Submit</button>
           </form>
@@ -36,14 +36,14 @@
               <table class="table table-striped" style="max-width: 300px;">
                 <thead>
                   <tr>
-                    <th>Word</th>
-                    <th>Count</th>
+                    <th>Account Name</th>
+                    <th>Account Type</th>
                   </tr>
                 </thead>
                 {% for result in results%}
                   <tr>
-                    <td>{{ result[0] }}</td>
-                    <td>{{ result[1] }}</td>
+                    <td>{{ result["name"] }}</td>
+                    <td>{{ result["type"] }}</td>
                   </tr>
                 {% endfor %}
               </table>

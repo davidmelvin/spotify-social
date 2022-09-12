@@ -4,14 +4,12 @@ from models import Account
 from models import db
 
 
-def get_followed_accounts_of_user(user_id: str):
-    url = "https://spclient.wg.spotify.com/user-profile-view/v3/profile/{params[user_id]}/following?market=from_token"
-
-    params = {"user_id": user_id}
-
-    print(f"getting followed accounts of {user_id}")
-
-    return get_data_from_url(url, params)
+def get_followed_accounts_of_user():
+    try:
+        accounts = Account.query.all()
+    except Exception as err:
+        raise Exception(f'Unable to read accounts: {err}')
+    return accounts
 
 
 def save_followed_accounts_of_user(user_id: str):
@@ -22,17 +20,24 @@ def save_followed_accounts_of_user(user_id: str):
             accounts = followed_accounts["profiles"]
 
             for profile in accounts:
-                uri = profile.get("uri", "unkown uri")
+                uri = profile.get("uri", None)
 
-                if ":user:" in uri:
-                    type = "user"
-                else:
-                    type = "artist"
+                if not uri:
+                    raise Exception(
+                        "Unable to read uri for one of the profiles")
+
+                name = profile.get("name", None)
+
+                if not name:
+                    raise Exception("Unable to read name for one of profiles")
+
+                source_id = uri.split(":")[2]
+                account_type = uri.split(":")[1]
 
                 account = Account(
-                    uri=uri,
-                    name=profile.get("name", "unknown name"),
-                    type=type
+                    source_id=source_id,
+                    name=name,
+                    type=account_type
                 )
                 db.session.add(account)
                 db.session.commit()

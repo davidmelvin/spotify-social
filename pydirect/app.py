@@ -2,7 +2,7 @@ from requests import request
 from flask import Flask, render_template, request
 from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
-from accounts import save_followed_accounts_of_user
+from accounts import save_followed_accounts_of_user, get_followed_accounts_of_user
 from models import db
 
 
@@ -25,6 +25,12 @@ app = create_app()
 def index():
     errors = []
     results = {}
+
+    if request.method == "GET":
+        try:
+            results = get_followed_accounts_of_user()
+        except Exception as err:
+            errors.append(err)
 
     if request.method == "POST":
         try:

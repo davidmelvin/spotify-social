@@ -23,6 +23,3 @@ def get_access_token():
     else:
         print("got access token as if I am web player")
         return response.json().get('accessToken')
-
-
-api_access_token = get_access_token()
