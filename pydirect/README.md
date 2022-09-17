@@ -3,6 +3,10 @@ To run the program:
 python3 main.py
 ```
 
+```
+flask --app app --debug run
+```
+
 Still redoing some work initially done in JS.
 
 to-do:

@@ -4,6 +4,14 @@ from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
 import accounts
 from models import db
+import logging
+# from logging.config import dictConfig
+import sys
+logging.basicConfig(stream=sys.stdout, level=logging.INFO)
+
+logger = logging.getLogger("concert_buddies")
+# logger.setLevel(logging.DEBUG)
+# logger.debug("PLSSSS")
 
 
 def create_app():
@@ -35,13 +43,33 @@ def index():
     if request.method == "POST":
         try:
             user_id = request.form['url']
-            results = accounts.save_followed_accounts_of_user(user_id)
+            results = accounts.save_followed_accounts_of_user(
+                user_id=user_id, recur=True)
         except Exception as err:
             errors.append(
                 err
             )
 
     return render_template('index.html', errors=errors, results=results)
+
+
+@app.route("/mutuals/", methods=["POST"])
+def mutuals():
+    errors = []
+    results = {}
+
+    if request.method == "POST":
+        try:
+            user_id = request.form['url']
+            # results = accounts.
+            results = []
+
+        except Exception as err:
+            errors.append(
+                err
+            )
+
+        return render_template('mutuals.html', errors=errors, results=results)
 
 
 @ app.route('/<name>')

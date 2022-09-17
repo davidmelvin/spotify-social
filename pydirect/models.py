@@ -47,11 +47,12 @@ if __name__ == '__main__':
 class Follow(db.Model):
     __tablename__ = 'follower'
 
-    id = db.Column(db.Integer, primary_key=True)
+    id = db.Column(db.Integer)
+    # both of these are primary keys of the table, together
     follower_id = db.Column(
-        db.String(), ForeignKey("account.source_id"), index=True)
+        db.String(), ForeignKey("account.source_id"), index=True, primary_key=True)
     following_id = db.Column(
-        db.String(), ForeignKey("account.source_id"), index=True)
+        db.String(), ForeignKey("account.source_id"), index=True, primary_key=True)
 
     def __init__(self, follower_id, following_id):
         self.follower_id = follower_id

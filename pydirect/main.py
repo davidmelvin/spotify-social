@@ -1,4 +1,4 @@
-from accounts import get_followed_accounts_of_user, test
+# from accounts import get_followed_accounts_of_user, test
 from friend_activity import get_friend_activity
 from utils.db import get_db_connection
 
