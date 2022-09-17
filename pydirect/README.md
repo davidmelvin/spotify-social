@@ -10,7 +10,7 @@ flask --app app --debug run
 Still redoing some work initially done in JS.
 
 to-do:
-- just use manual sql?????
+- add last updated and use to avoid recalling stuff
 - write output of getting all accounts to files for my followed artists and my friend's followed artists
 - get shared artists
 - get all playlists I follow
