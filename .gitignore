@@ -11,3 +11,4 @@ database.ini
 
 # venv
 sandbox/
+local/

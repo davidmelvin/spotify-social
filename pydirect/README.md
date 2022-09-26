@@ -4,6 +4,7 @@ python3 main.py
 ```
 
 ```
+source local/bin/activate
 flask --app app --debug run
 ```
 
