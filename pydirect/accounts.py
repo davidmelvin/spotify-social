@@ -90,7 +90,7 @@ def save_concert_buddies_user(user_id: str):
 
         db.session.commit()
     except Exception as err:
-        error = f"Unable to add account {user_id} to database. error: {err}"
+        error = f"save_concert_buddies_user: Unable to add account {user_id} to database. error: {err}"
         logger.error(error)
         raise Exception(error)
 
@@ -158,7 +158,7 @@ def save_followed_accounts_of_user(user_id: str, recur: bool = None):
                     db.session.execute(insert_relationship_if_not_exists)
                     db.session.commit()
                 except Exception as err:
-                    error = f"Unable to add follower relationship to database. error: {err}"
+                    error = f"save_followed_accounts_of_user: Unable to add follower relationship to database. error: {err}"
                     logger.error(error)
                     raise Exception(error)
 

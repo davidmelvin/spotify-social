@@ -38,7 +38,7 @@ class Account(db.Model):
 
     def as_dict(self):
         return {
-            "id": self.id,
+            "id": self.id if self.id else uuid.uuid4(),
             "source_id": self.source_id,
             "name": self.name,
             "type": self.type
@@ -64,7 +64,6 @@ if __name__ == '__main__':
 class Follow(db.Model):
     __tablename__ = 'follower'
 
-    # id = db.Column(db.Integer)
     id = db.Column(UUID(as_uuid=True), default=uuid.uuid4)
 
     # both of these are primary keys of the table, together
@@ -89,7 +88,7 @@ class Follow(db.Model):
 
     def as_dict(self):
         return {
-            "id": self.id,
+            "id": self.id if self.id else uuid.uuid4(),
             "follower_id": self.follower_id,
             "following_id": self.following_id
         }
