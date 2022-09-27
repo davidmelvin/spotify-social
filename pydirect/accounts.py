@@ -58,6 +58,7 @@ def save_followed_accounts_of_user(user_id: str, recur: bool = None):
     last_updated = get_last_updated_time_for_user(user_id)
     yesterday = datetime.utcnow() - timedelta(days=1)
 
+    # TODO: parameterize this for different environments
     if last_updated > yesterday:
         logger.info(
             "save_followed_accounts_of_user: Last updated user %s at %s, so will not update again.", user_id, last_updated)
