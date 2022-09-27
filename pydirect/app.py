@@ -10,7 +10,7 @@ import sys
 logging.basicConfig(stream=sys.stdout, level=logging.INFO)
 
 logger = logging.getLogger("concert_buddies")
-# logger.setLevel(logging.DEBUG)
+logger.setLevel(logging.DEBUG)
 # logger.debug("PLSSSS")
 
 

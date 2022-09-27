@@ -5,6 +5,8 @@ from models import db
 from sqlalchemy.dialects.postgresql import insert
 # from app import app
 
+from datetime import datetime, timedelta
+
 import logging
 
 logger = logging.getLogger("concert_buddies")
@@ -43,7 +45,24 @@ def get_followed_accounts_of_user(user_id):
     # return data.json()
 
 
+def get_last_updated_time_for_user(user_id: str):
+    try:
+        account = Account.query.filter_by(source_id=user_id).one()
+        return account.updated_at
+    except Exception as err:
+        raise Exception(
+            f'Unable to get last updated time for user {user_id}. Error: {err}')
+
+
 def save_followed_accounts_of_user(user_id: str, recur: bool = None):
+    last_updated = get_last_updated_time_for_user(user_id)
+    yesterday = datetime.utcnow() - timedelta(days=1)
+
+    if last_updated > yesterday:
+        logger.info(
+            "save_followed_accounts_of_user: Last updated user %s at %s, so will not update again.", user_id, last_updated)
+        return None
+
     followed_accounts = get_followed_accounts_of_user(user_id)
 
     if followed_accounts:

@@ -1,6 +1,9 @@
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy.dialects.postgresql import ENUM
 from sqlalchemy import ForeignKey, Index
+from sqlalchemy.sql import func
+from sqlalchemy.types import TIMESTAMP
+
 
 db = SQLAlchemy()
 
@@ -13,6 +16,16 @@ class Account(db.Model):
     name = db.Column(db.String(), nullable=False)
     type = db.Column(
         ENUM('artist', 'user', name='account_type_enum'), nullable=False)
+
+    created_at = db.Column(
+        TIMESTAMP, server_default=func.now(), nullable=False)
+    created_by = db.Column(db.String(), nullable=False,
+                           server_default="server")
+
+    updated_at = db.Column(TIMESTAMP, server_default=func.now(),
+                           onupdate=func.now(), nullable=False)
+    updated_by = db.Column(db.String(), nullable=False,
+                           server_default="server")
 
     def __init__(self, source_id, name, type):
         self.source_id = source_id
@@ -53,6 +66,16 @@ class Follow(db.Model):
         db.String(), ForeignKey("account.source_id"), index=True, primary_key=True)
     following_id = db.Column(
         db.String(), ForeignKey("account.source_id"), index=True, primary_key=True)
+
+    created_at = db.Column(
+        TIMESTAMP, server_default=func.now(), nullable=False)
+    created_by = db.Column(db.String(), nullable=False,
+                           server_default="server")
+
+    updated_at = db.Column(TIMESTAMP, server_default=func.now(),
+                           onupdate=func.now(), nullable=False)
+    updated_by = db.Column(db.String(), nullable=False,
+                           server_default="server")
 
     def __init__(self, follower_id, following_id):
         self.follower_id = follower_id
