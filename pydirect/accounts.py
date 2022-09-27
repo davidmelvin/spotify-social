@@ -1,9 +1,11 @@
 from utils.requests import get_data_from_url
+import spotify_requests
 
 from models import Account, Follow
 from models import db
 from sqlalchemy.dialects.postgresql import insert
 # from app import app
+from sqlalchemy import func
 
 from datetime import datetime, timedelta
 
@@ -20,7 +22,23 @@ def get_all_accounts():
     return accounts
 
 
-def get_followed_accounts_of_user(user_id):
+def get_artists_followed_by_user(user_id: str) -> list[Account]:
+    try:
+        followed_artists = db.session.query(Account.name, Follow.follower_id, Follow.following_id).\
+            filter(Follow.follower_id == user_id).\
+            filter(Account.type == "artist").\
+            join(Account, Account.source_id == Follow.following_id).\
+            order_by(Account.name).\
+            all()
+
+        return followed_artists
+
+    except Exception as err:
+        raise Exception(
+            f'get_artists_followed_by_user failed for user {user_id} with error: {err}')
+
+
+def fetch_spotify_followed_accounts_of_user(user_id):
     url = "https://spclient.wg.spotify.com/user-profile-view/v3/profile/{params[user_id]}/following?market=from_token"
 
     params = {"user_id": user_id}
@@ -42,8 +60,6 @@ def get_followed_accounts_of_user(user_id):
         logger.error(error)
         raise Exception(error)
 
-    # return data.json()
-
 
 def get_last_updated_time_for_user(user_id: str):
     try:
@@ -54,20 +70,46 @@ def get_last_updated_time_for_user(user_id: str):
             f'Unable to get last updated time for user {user_id}. Error: {err}')
 
 
+def save_concert_buddies_user(user_id: str):
+
+    try:
+        profile = spotify_requests.fetch_spotify_profile_of_user(user_id)
+        source_id = profile.get("uri").split(":")[2]
+        account_type = profile.get("uri").split(":")[1]
+
+        account = Account(
+            source_id=source_id,
+            name=profile.get("name"),
+            type=account_type
+        )
+
+        insert_account_if_not_exists = insert(Account).values(
+            **account.as_dict_without_id()).on_conflict_do_update(index_elements=['source_id'], set_=account.as_dict())
+
+        db.session.execute(insert_account_if_not_exists)
+
+        db.session.commit()
+    except Exception as err:
+        error = f"Unable to add account {user_id} to database. error: {err}"
+        logger.error(error)
+        raise Exception(error)
+
+
 def save_followed_accounts_of_user(user_id: str, recur: bool = None):
-    last_updated = get_last_updated_time_for_user(user_id)
-    yesterday = datetime.utcnow() - timedelta(days=1)
+    # last_updated = get_last_updated_time_for_user(user_id)
+    # yesterday = datetime.utcnow() - timedelta(days=1)
 
-    # TODO: parameterize this for different environments
-    if last_updated > yesterday:
-        logger.info(
-            "save_followed_accounts_of_user: Last updated user %s at %s, so will not update again.", user_id, last_updated)
-        return None
+    # # TODO: parameterize this for different environments
+    # if last_updated > yesterday:
+    #     logger.info(
+    #         "save_followed_accounts_of_user: Last updated user %s at %s, so will not update again.", user_id, last_updated)
+    #     return None
 
-    followed_accounts = get_followed_accounts_of_user(user_id)
+    followed_accounts = fetch_spotify_followed_accounts_of_user(user_id)
 
     if followed_accounts:
         try:
+
             accounts = followed_accounts["profiles"]
             print(f"{user_id} follows {len(accounts)} accounts. saving them!")
 
@@ -94,13 +136,13 @@ def save_followed_accounts_of_user(user_id: str, recur: bool = None):
                     )
 
                     insert_account_if_not_exists = insert(Account).values(
-                        **account.as_dict_without_id()).on_conflict_do_nothing()
+                        **account.as_dict_without_id()).on_conflict_do_update()
 
                     db.session.execute(insert_account_if_not_exists)
 
                     db.session.commit()
                 except Exception as err:
-                    error = f"Unable to add account to database. error: {err}"
+                    error = f"Unable to add account {source_id} to database. error: {err}"
                     logger.error(error)
                     raise Exception(error)
 

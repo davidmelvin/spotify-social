@@ -43,6 +43,9 @@ def index():
     if request.method == "POST":
         try:
             user_id = request.form['url']
+            # make sure this account we're searching for is in the database
+            accounts.save_concert_buddies_user(user_id)
+
             results = accounts.save_followed_accounts_of_user(
                 user_id=user_id, recur=True)
         except Exception as err:
@@ -53,23 +56,18 @@ def index():
     return render_template('index.html', errors=errors, results=results)
 
 
-@app.route("/mutuals/", methods=["POST"])
-def mutuals():
+@app.route("/artists/<source_id>", methods=["GET"])
+def followed_artists(source_id):
     errors = []
     results = {}
 
-    if request.method == "POST":
-        try:
-            user_id = request.form['url']
-            # results = accounts.
-            results = []
+    try:
+        results = accounts.get_artists_followed_by_user(source_id)
 
-        except Exception as err:
-            errors.append(
-                err
-            )
+    except Exception as err:
+        errors.append(err)
 
-        return render_template('mutuals.html', errors=errors, results=results)
+    return render_template('artists.html', user=source_id, errors=errors, results=results)
 
 
 @ app.route('/<name>')

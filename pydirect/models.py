@@ -3,6 +3,10 @@ from sqlalchemy.dialects.postgresql import ENUM
 from sqlalchemy import ForeignKey, Index
 from sqlalchemy.sql import func
 from sqlalchemy.types import TIMESTAMP
+from sqlalchemy.dialects.postgresql import UUID
+
+
+import uuid
 
 
 db = SQLAlchemy()
@@ -11,7 +15,7 @@ db = SQLAlchemy()
 class Account(db.Model):
     __tablename__ = 'account'
 
-    id = db.Column(db.Integer, primary_key=True)
+    id = db.Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
     source_id = db.Column(db.String(), unique=True, nullable=False)
     name = db.Column(db.String(), nullable=False)
     type = db.Column(
@@ -60,7 +64,9 @@ if __name__ == '__main__':
 class Follow(db.Model):
     __tablename__ = 'follower'
 
-    id = db.Column(db.Integer)
+    # id = db.Column(db.Integer)
+    id = db.Column(UUID(as_uuid=True), default=uuid.uuid4)
+
     # both of these are primary keys of the table, together
     follower_id = db.Column(
         db.String(), ForeignKey("account.source_id"), index=True, primary_key=True)
